@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "744686461098",
+    "project_id": "dataalarm-9f240",
+    "storage_bucket": "dataalarm-9f240.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:744686461098:android:dcede8d0fa38934be230d3",
+        "android_client_info": {
+          "package_name": "com.restart.dataalarm"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "744686461098-p5k7qn4j5kvmh1uvp7jcaee8c8l4ev2d.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBFhaNVYQr94SdvsDNypFOeV5NHEEfiixo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "744686461098-p5k7qn4j5kvmh1uvp7jcaee8c8l4ev2d.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
