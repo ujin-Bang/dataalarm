@@ -1,13 +1,17 @@
 package com.restart.dataalarm
 
+import android.annotation.SuppressLint
+import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
+import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import com.restart.dataalarm.NotificationType.*
 
 //파이어베이스 메시지를 처리하기 위한 클래스생성 FirebaseMessagingService상속
 class MyFirebaseMessagingService : FirebaseMessagingService() {
@@ -25,21 +29,19 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
         createNotificationChannel()
 
+        val type = remoteMessage.data["type"]?.let { valueOf(it) }
         val title = remoteMessage.data["title"]
         val message = remoteMessage.data["message"]
-        val notificationBuilder = NotificationCompat.Builder(this, CHANNEL_ID)
-            .setSmallIcon(R.drawable.notification)
-            .setContentTitle(title)
-            .setContentText(message)
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+
+        type ?: return
 
         NotificationManagerCompat.from(this)
-            .notify(1, notificationBuilder.build())
+            .notify(type.id, createNotification(type, title, message))
     }
 
     //알림채널 만들기
     private fun createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES .O){ //기기 버전이 오래오 버전 이상이면
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) { //기기 버전이 오래오 버전 이상이면
             val channel = NotificationChannel(
                 CHANNEL_ID,
                 CHANNEL_NAME,
@@ -51,6 +53,49 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
                 .createNotificationChannel(channel)
         }
     }
+
+    @SuppressLint("RemoteViewLayout")
+    private fun createNotification(
+        type: NotificationType,
+        title: String?,
+        message: String?
+    ): Notification {
+        val notificationBuilder = NotificationCompat.Builder(this, CHANNEL_ID)
+            .setSmallIcon(R.drawable.notification)
+            .setContentTitle(title)
+            .setContentText(message)
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+
+        when (type) {
+            NORMAL -> Unit
+            EXPANDABLE -> {
+                notificationBuilder.setStyle(
+                    NotificationCompat.BigTextStyle()
+                        .bigText(
+                            "ㄱㄴㄷ리이ㅓㅗㄹ매ㅕㅗㄹ미러모리ㅓㅇ뢰ㅓㅗ머ㅏㅣ로 모ㅓ리ㅏ머로어ㅏ몽리ㅗ미로미왈" +
+                                    "ㅁ리ㅏㅁ러ㅚ마ㅓ룀러ㅚ마러ㅚ마ㅓㄴㅇ로이ㅏㅓㅗ리ㅏ어노리ㅏㅓㅁ" +
+                                    "어마ㅗ리마ㅓㅗ림ㅇ룀뢰모러이ㅏㅗ랻져새쟈ㅕㄷ교ㅔㅕ쟈됴게" + "ㅇㅁㄴ래혀ㅑㅁㄷ혀ㅔㅑ먄올"
+                    )
+                )
+            }
+
+            CUSTOM -> {
+                notificationBuilder
+                    .setStyle(NotificationCompat.DecoratedCustomViewStyle())
+                    .setCustomContentView(
+                        RemoteViews(
+                            packageName,
+                            R.layout.view_custom_notification
+                        ).apply {
+                            setTextViewText(R.id.title, title)
+                            setTextViewText(R.id.message, message)
+                        }
+                    )
+            }
+        }
+        return notificationBuilder.build()
+    }
+
 
     companion object {
         private const val CHANNEL_NAME = "Emoji Party"
